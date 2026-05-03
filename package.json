@@ -1,14 +1,16 @@
 {
-  "name": "simple-icons-companion",
-  "description": "Userscript that improves Simple Icons SVG diffs on GitHub.",
-  "private": true,
-  "version": "0.0.0",
-  "license": "MIT",
-  "type": "module",
-  "scripts": {
-    "check": "node --check simple-icons-companion.user.js"
-  },
-  "devDependencies": {
-    "prettier": "^3.8.3"
-  }
+	"name": "simple-icons-companion",
+	"description": "Userscript that improves Simple Icons SVG diffs on GitHub.",
+	"private": true,
+	"version": "0.0.0",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"check": "node --check simple-icons-companion.user.js",
+		"lint": "prettier --check .",
+		"test": "node --run check && node --run lint"
+	},
+	"devDependencies": {
+		"prettier": "^3.8.3"
+	}
 }
