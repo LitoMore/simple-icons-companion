@@ -212,6 +212,7 @@
 
 		const label = document.createElement('label');
 		label.className = 'simple-icons-companion-color-toggle';
+		label.classList.add('simple-icons-companion-color-toggle-disabled');
 		label.htmlFor = 'simple-icons-companion-color-toggle';
 		label.title = 'Loading Simple Icons colors...';
 
@@ -450,7 +451,7 @@
 			enableColorToggle(deletedColor, addedColor);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : 'Unknown error';
-			disableColorToggle(message);
+			disableColorToggle(shell, message);
 		}
 	}
 
@@ -588,6 +589,7 @@
 		if (toggle) {
 			toggle.title = `Deleted: ${deletedColor}; Added: ${addedColor}`;
 			toggle.classList.remove('simple-icons-companion-color-toggle-error');
+			toggle.classList.remove('simple-icons-companion-color-toggle-disabled');
 		}
 
 		if (input instanceof HTMLInputElement) {
@@ -595,7 +597,7 @@
 		}
 	}
 
-	function disableColorToggle(message) {
+	function disableColorToggle(shell, message) {
 		const toggle = document.querySelector(
 			'.simple-icons-companion-color-toggle',
 		);
@@ -604,11 +606,16 @@
 		if (toggle) {
 			toggle.title = `Color failed to load: ${message}`;
 			toggle.classList.add('simple-icons-companion-color-toggle-error');
+			toggle.classList.add('simple-icons-companion-color-toggle-disabled');
 		}
 
 		if (input instanceof HTMLInputElement) {
+			input.checked = false;
 			input.disabled = true;
 		}
+
+		shell.classList.remove('simple-icons-companion-color-enabled');
+		writeStoredToggle(COLOR_STORAGE_KEY, false);
 	}
 
 	async function fetchSimpleIconColor(svgUrl, sourceSvg) {
@@ -1615,6 +1622,11 @@
       .simple-icons-companion-points-toggle-error,
       .simple-icons-companion-color-toggle-error {
         color: var(--fgColor-danger);
+      }
+
+      .simple-icons-companion-color-toggle-disabled {
+        color: var(--fgColor-disabled, var(--fgColor-muted));
+        cursor: default;
       }
 
       .simple-icons-companion-points-tooltip {
