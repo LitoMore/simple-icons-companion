@@ -19,7 +19,7 @@
 	const SIMPLE_ICONS_NWO = 'simple-icons/simple-icons';
 	const OVERLAY_MODE = 'overlay';
 	const DEFAULT_SVG_SIZE = 300;
-	const TWO_UP_MAX_WIDTH = 414;
+	const OVERLAY_FRAME_SIZE = 302;
 	const STYLE_ID = 'simple-icons-companion-styles';
 	const SVG_NS = 'http://www.w3.org/2000/svg';
 	const PATH_COMMAND_PATTERN = /^[AaCcHhLlMmQqSsTtVvZz]$/;
@@ -1420,12 +1420,16 @@
 	}
 
 	function createOverlayLayout(deletedSvg, addedSvg) {
-		const deletedSize = scaleToMaxWidth(deletedSvg.size, TWO_UP_MAX_WIDTH);
-		const addedSize = scaleToMaxWidth(addedSvg.size, TWO_UP_MAX_WIDTH);
-		const frame = {
-			width: Math.ceil(Math.max(deletedSize.width, addedSize.width)),
-			height: Math.ceil(Math.max(deletedSize.height, addedSize.height)),
+		const contentFrame = {
+			width: DEFAULT_SVG_SIZE,
+			height: DEFAULT_SVG_SIZE,
 		};
+		const frame = {
+			width: OVERLAY_FRAME_SIZE,
+			height: OVERLAY_FRAME_SIZE,
+		};
+		const deletedSize = scaleToFitFrame(deletedSvg.size, contentFrame);
+		const addedSize = scaleToFitFrame(addedSvg.size, contentFrame);
 
 		return {
 			frame,
@@ -1433,35 +1437,27 @@
 				'simple-icons-companion-overlay-deleted',
 				deletedSvg.element,
 				deletedSize,
-				frame,
 			),
 			addedLayer: createSvgLayer(
 				'simple-icons-companion-overlay-added',
 				addedSvg.element,
 				addedSize,
-				frame,
 			),
 		};
 	}
 
-	function createSvgLayer(className, svg, size, frame) {
+	function createSvgLayer(className, svg, size) {
 		const layer = document.createElement('span');
 		layer.className = `simple-icons-companion-overlay-layer ${className}`;
 		layer.style.width = `${size.width}px`;
 		layer.style.height = `${size.height}px`;
-		layer.style.left = `${(frame.width - size.width) / 2}px`;
-		layer.style.top = `${(frame.height - size.height) / 2}px`;
 		layer.append(svg);
 
 		return layer;
 	}
 
-	function scaleToMaxWidth(size, maxWidth) {
-		if (size.width <= maxWidth) {
-			return size;
-		}
-
-		const scale = maxWidth / size.width;
+	function scaleToFitFrame(size, frame) {
+		const scale = Math.min(frame.width / size.width, frame.height / size.height);
 		return {
 			width: size.width * scale,
 			height: size.height * scale,
@@ -1544,7 +1540,9 @@
 
       .simple-icons-companion-overlay-layer {
         position: absolute;
+        inset: 0;
         display: block;
+        margin: auto;
         line-height: 0;
         pointer-events: none;
       }
@@ -1679,8 +1677,9 @@
         inset: 0;
         z-index: 1;
         display: none;
-        width: 100%;
-        height: 100%;
+        width: ${DEFAULT_SVG_SIZE}px;
+        height: ${DEFAULT_SVG_SIZE}px;
+        margin: auto;
         line-height: 0;
         overflow: visible;
         pointer-events: none;
