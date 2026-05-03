@@ -301,7 +301,7 @@
 			view.style.display = 'none';
 		}
 
-		targetView.style.display = 'block';
+		targetView.style.display = mode === OVERLAY_MODE ? 'flex' : 'block';
 
 		for (const label of modes.querySelectorAll('.js-view-mode-item')) {
 			label.classList.remove('selected');
@@ -1517,13 +1517,17 @@
 		style.id = STYLE_ID;
 		style.textContent = `
       .simple-icons-companion-overlay-view {
+        flex-direction: column;
+        align-items: center;
         margin: 0 auto;
         text-align: center;
         line-height: 0;
       }
 
       .simple-icons-companion-overlay-title {
-        display: inline-block;
+        display: block;
+        top: auto;
+        margin-bottom: 4px;
         line-height: 1;
       }
 
