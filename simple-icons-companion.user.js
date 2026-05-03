@@ -1464,7 +1464,10 @@
 	}
 
 	function scaleToFitFrame(size, frame) {
-		const scale = Math.min(frame.width / size.width, frame.height / size.height);
+		const scale = Math.min(
+			frame.width / size.width,
+			frame.height / size.height,
+		);
 		return {
 			width: size.width * scale,
 			height: size.height * scale,
