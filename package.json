@@ -7,10 +7,10 @@
 	"type": "module",
 	"scripts": {
 		"build": "node scripts/build.js",
-		"check": "node --check simple-icons-companion.user.js",
+		"check": "node --run build && node --check simple-icons-companion.user.js",
 		"typecheck": "tsgo --noEmit",
 		"lint": "prettier --check . && xo",
-		"test": "node --run typecheck && node --run build && node --run check && node --run lint"
+		"test": "node --run typecheck && node --run check && node --run lint"
 	},
 	"devDependencies": {
 		"@litomore/xo-config": "^0.1.0",
