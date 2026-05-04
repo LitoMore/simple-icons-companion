@@ -2,11 +2,13 @@
 // @name         Simple Icons Companion
 // @namespace    https://github.com/simple-icons/simple-icons
 // @version      0.0.0
-// @description  Adds Overlay mode plus Points and Color toggles to Simple Icons SVG diffs on GitHub.
+// @description  Adds Overlay mode plus Points and Color toggles to Simple Icons SVG previews on GitHub.
 // @license      MIT
 // @updateURL    https://github.com/LitoMore/simple-icons-companion/raw/refs/heads/main/simple-icons-companion.user.js
 // @downloadURL  https://github.com/LitoMore/simple-icons-companion/raw/refs/heads/main/simple-icons-companion.user.js
 // @match        https://github.com/simple-icons/simple-icons/*
+// @match        https://viewscreen.githubusercontent.com/added/svg*
+// @match        https://viewscreen.githubusercontent.com/deleted/svg*
 // @match        https://viewscreen.githubusercontent.com/diff/svg*
 // @run-at       document-idle
 // @grant        none
@@ -31,7 +33,7 @@
 		return;
 	}
 
-	if (!isSimpleIconsSvgDiffFrame()) {
+	if (!isSimpleIconsSvgPreviewFrame()) {
 		return;
 	}
 
@@ -44,10 +46,10 @@
 		);
 	}
 
-	function isSimpleIconsSvgDiffFrame() {
+	function isSimpleIconsSvgPreviewFrame() {
 		if (
 			window.location.hostname !== 'viewscreen.githubusercontent.com' ||
-			!window.location.pathname.startsWith('/diff/svg')
+			!isSupportedSvgPreviewPath(window.location.pathname)
 		) {
 			return false;
 		}
@@ -72,12 +74,25 @@
 		}
 	}
 
+	function isSupportedSvgPreviewPath(pathname) {
+		return (
+			pathname.startsWith('/added/svg') ||
+			pathname.startsWith('/deleted/svg') ||
+			pathname.startsWith('/diff/svg')
+		);
+	}
+
 	function initCompanionModes() {
 		const shell = document.querySelector(
 			'.js-render-shell [data-type="diff"][data-file1][data-file2]',
 		);
 
-		if (!shell || shell.dataset.simpleIconsCompanionOverlay === 'true') {
+		if (!shell) {
+			initSinglePreviewEnhancements();
+			return;
+		}
+
+		if (shell.dataset.simpleIconsCompanionOverlay === 'true') {
 			return;
 		}
 
@@ -102,8 +117,9 @@
 		const overlayView = createOverlayView();
 		shell.insertBefore(overlayView, renderBar);
 		appendModeControl(modes, OVERLAY_MODE, 'Overlay');
-		appendPointsToggle(shell, modes);
-		appendColorToggle(shell, modes);
+		const controls = getCompanionControls(modes);
+		appendPointsToggle(shell, controls);
+		appendColorToggle(shell, controls);
 		bindModeSwitching(shell, modes);
 
 		renderOverlay(overlayView, deletedUrl, addedUrl, pointsState);
@@ -114,6 +130,86 @@
 			addedUrl,
 			pointsState,
 		);
+	}
+
+	function initSinglePreviewEnhancements() {
+		const shell = document.querySelector('.js-render-shell');
+		const frame = shell?.querySelector('.border-wrap.img-view');
+		const side = getSinglePreviewSide();
+
+		if (
+			!shell ||
+			!frame ||
+			!side ||
+			frame.dataset.simpleIconsCompanionSingle === 'true'
+		) {
+			return;
+		}
+
+		const svgUrl = getSinglePreviewSvgUrl(frame);
+
+		if (!svgUrl) {
+			return;
+		}
+
+		frame.dataset.simpleIconsCompanionSingle = 'true';
+		shell.classList.add('simple-icons-companion-single-shell');
+		frame.classList.add('simple-icons-companion-single-view');
+		frame.classList.add(`simple-icons-companion-single-${side}`);
+		injectStyles();
+
+		const controls = document.createElement('div');
+		controls.className =
+			'simple-icons-companion-controls simple-icons-companion-points-control simple-icons-companion-single-controls';
+		frame.insertAdjacentElement('afterend', controls);
+
+		appendPointsToggle(shell, controls);
+		appendColorToggle(shell, controls);
+		renderSinglePreviewControls(shell, frame, side, svgUrl);
+	}
+
+	function getSinglePreviewSide() {
+		if (window.location.pathname.startsWith('/added/svg')) {
+			return 'added';
+		}
+
+		if (window.location.pathname.startsWith('/deleted/svg')) {
+			return 'deleted';
+		}
+
+		return '';
+	}
+
+	function getSinglePreviewSvgUrl(frame) {
+		return (
+			decodeHexEncodedUrl(
+				new URLSearchParams(window.location.search).get('enc_url'),
+			) ||
+			frame.dataset.image ||
+			''
+		);
+	}
+
+	function decodeHexEncodedUrl(value) {
+		if (!value || value.length % 2 !== 0 || /[^\da-f]/i.test(value)) {
+			return '';
+		}
+
+		const characters = [];
+
+		for (let index = 0; index < value.length; index += 2) {
+			characters.push(
+				String.fromCharCode(Number.parseInt(value.slice(index, index + 2), 16)),
+			);
+		}
+
+		const decoded = characters.join('');
+
+		try {
+			return new URL(decoded).href;
+		} catch {
+			return '';
+		}
 	}
 
 	function createOverlayView() {
@@ -147,7 +243,7 @@
 		modes.append(label);
 	}
 
-	function appendPointsToggle(shell, modes) {
+	function appendPointsToggle(shell, controls) {
 		const existingInput = document.getElementById(
 			'simple-icons-companion-points-toggle',
 		);
@@ -196,13 +292,12 @@
 		].join('\n');
 		tooltip.append(tooltipText);
 
-		const wrapper = getCompanionControls(modes);
-		wrapper.append(label, tooltip);
+		controls.append(label, tooltip);
 
 		return input;
 	}
 
-	function appendColorToggle(shell, modes) {
+	function appendColorToggle(shell, controls) {
 		const existingInput = document.getElementById(
 			'simple-icons-companion-color-toggle',
 		);
@@ -235,7 +330,7 @@
 		});
 
 		label.append(input, document.createTextNode('Color'));
-		getCompanionControls(modes).append(label);
+		controls.append(label);
 
 		return input;
 	}
@@ -406,19 +501,19 @@
 			loadPreviewColors(shell, deletedUrl, addedUrl, pointsState);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : 'Unknown error';
-			const toggle = document.querySelector(
-				'.simple-icons-companion-points-toggle',
-			);
-			const input = toggle?.querySelector('input');
+			disablePointsToggle(message);
+		}
+	}
 
-			if (toggle) {
-				toggle.title = `Points failed to load: ${message}`;
-				toggle.classList.add('simple-icons-companion-points-toggle-error');
-			}
+	async function renderSinglePreviewControls(shell, frame, side, svgUrl) {
+		try {
+			const svg = await fetchSvg(svgUrl, false);
 
-			if (input instanceof HTMLInputElement) {
-				input.disabled = true;
-			}
+			attachPointsLayer(frame, svg.element);
+			loadSinglePreviewColor(shell, frame, side, svgUrl, svg.element);
+		} catch (error) {
+			const message = error instanceof Error ? error.message : 'Unknown error';
+			disablePointsToggle(message);
 		}
 	}
 
@@ -448,7 +543,20 @@
 				deletedColor,
 			);
 			attachBuiltInColor(shell, 'added', pointsState.addedSvg, addedColor);
-			enableColorToggle(deletedColor, addedColor);
+			enableColorToggle({deleted: deletedColor, added: addedColor});
+		} catch (error) {
+			const message = error instanceof Error ? error.message : 'Unknown error';
+			disableColorToggle(shell, message);
+		}
+	}
+
+	async function loadSinglePreviewColor(shell, frame, side, svgUrl, sourceSvg) {
+		try {
+			const color = await fetchSimpleIconColor(svgUrl, sourceSvg);
+
+			shell.style.setProperty(`--simple-icons-companion-${side}-color`, color);
+			attachColorLayer(frame, sourceSvg, color);
+			enableColorToggle({[side]: color});
 		} catch (error) {
 			const message = error instanceof Error ? error.message : 'Unknown error';
 			disableColorToggle(shell, message);
@@ -580,14 +688,36 @@
 		host.append(layer);
 	}
 
-	function enableColorToggle(deletedColor, addedColor) {
+	function disablePointsToggle(message) {
 		const toggle = document.querySelector(
-			'.simple-icons-companion-color-toggle',
+			'.simple-icons-companion-points-toggle',
 		);
 		const input = toggle?.querySelector('input');
 
 		if (toggle) {
-			toggle.title = `Deleted: ${deletedColor}; Added: ${addedColor}`;
+			toggle.title = `Points failed to load: ${message}`;
+			toggle.classList.add('simple-icons-companion-points-toggle-error');
+		}
+
+		if (input instanceof HTMLInputElement) {
+			input.disabled = true;
+		}
+	}
+
+	function enableColorToggle(colors) {
+		const toggle = document.querySelector(
+			'.simple-icons-companion-color-toggle',
+		);
+		const input = toggle?.querySelector('input');
+		const colorDetails = [
+			colors.deleted ? `Deleted: ${colors.deleted}` : '',
+			colors.added ? `Added: ${colors.added}` : '',
+		]
+			.filter(Boolean)
+			.join('; ');
+
+		if (toggle) {
+			toggle.title = colorDetails;
 			toggle.classList.remove('simple-icons-companion-color-toggle-error');
 			toggle.classList.remove('simple-icons-companion-color-toggle-disabled');
 		}
@@ -1715,6 +1845,33 @@
 
       .simple-icons-companion-color-enabled .simple-icons-companion-color-host > img.asset {
         opacity: 0;
+      }
+
+      .simple-icons-companion-single-shell > .simple-icons-companion-single-view {
+        position: relative;
+        box-sizing: border-box;
+        width: ${OVERLAY_FRAME_SIZE}px !important;
+        height: ${OVERLAY_FRAME_SIZE}px !important;
+        overflow: visible;
+        border-style: unset !important;
+      }
+
+      .simple-icons-companion-single-shell > .simple-icons-companion-single-view > img {
+        display: block;
+        width: ${DEFAULT_SVG_SIZE}px !important;
+        height: ${DEFAULT_SVG_SIZE}px !important;
+        max-width: none;
+        max-height: none;
+      }
+
+      .simple-icons-companion-single-shell.simple-icons-companion-color-enabled .simple-icons-companion-color-host > img {
+        opacity: 0;
+      }
+
+      .simple-icons-companion-single-view > .simple-icons-companion-points-layer {
+        inset: 1px;
+        width: ${DEFAULT_SVG_SIZE}px;
+        height: ${DEFAULT_SVG_SIZE}px;
       }
 
       .swipe .swipe-frame {
