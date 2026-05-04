@@ -1,0 +1,10 @@
+export const simpleIconsRepositoryPath = '/simple-icons/simple-icons';
+export const simpleIconsNwo = 'simple-icons/simple-icons';
+export const overlayMode = 'overlay';
+export const defaultSvgSize = 300;
+export const overlayFrameSize = 302;
+export const styleId = 'simple-icons-companion-styles';
+export const svgNamespace = 'http://www.w3.org/2000/svg';
+export const pathCommandPattern = /^[AaCcHhLlMmQqSsTtVvZz]$/v;
+export const pointsStorageKey = 'simple-icons-companion:points-enabled';
+export const colorStorageKey = 'simple-icons-companion:color-enabled';

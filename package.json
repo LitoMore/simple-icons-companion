@@ -6,11 +6,18 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
+		"build": "node scripts/build.js",
 		"check": "node --check simple-icons-companion.user.js",
-		"lint": "prettier --check .",
-		"test": "node --run check && node --run lint"
+		"typecheck": "tsgo --noEmit",
+		"lint": "prettier --check . && xo",
+		"test": "node --run typecheck && node --run build && node --run check && node --run lint"
 	},
 	"devDependencies": {
-		"prettier": "^3.8.3"
+		"@litomore/xo-config": "^0.1.0",
+		"@sindresorhus/tsconfig": "^8.1.0",
+		"@typescript/native-preview": "^7.0.0-dev.20260503.1",
+		"esbuild": "^0.28.0",
+		"prettier": "^3.8.3",
+		"xo": "^2.0.2"
 	}
 }

@@ -4,7 +4,7 @@
 
 - **Runtime** - Node.js 24 or later
 - **Package Manager** - npm only
-- **Formatter/Linter** - Prettier only
+- **Formatter/Linter** - XO for JavaScript/TypeScript files, Prettier for rest files.
 
 ## Conventions
 
