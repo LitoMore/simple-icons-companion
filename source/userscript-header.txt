@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         Simple Icons Companion
 // @namespace    https://github.com/simple-icons/simple-icons
+// @icon         https://cdn.simpleicons.org/simpleicons/000/fff
 // @version      0.0.0
 // @description  Adds Overlay mode plus Points and Color toggles to Simple Icons SVG previews on GitHub.
 // @license      MIT
