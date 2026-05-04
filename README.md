@@ -15,9 +15,7 @@ For added-only and deleted-only SVG previews, it adds the **Points** and **Color
 
 Install a userscript manager such as Tampermonkey, Violentmonkey, or Userscripts, then open the latest release userscript URL:
 
-```text
-https://github.com/LitoMore/simple-icons-companion/releases/latest/download/simple-icons-companion.user.js
-```
+<https://companion.simpleicons.org/download>
 
 Release assets are generated from source when a tag is pushed, so the built userscript is not tracked in this repository.
 
