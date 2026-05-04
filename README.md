@@ -22,7 +22,8 @@ Release assets are generated from source when a tag is pushed, so the built user
 The script runs only on:
 
 ```text
-https://github.com/simple-icons/simple-icons/*
+https://github.com/simple-icons/simple-icons/pull/*/changes
+https://github.com/simple-icons/simple-icons/pull/*/files
 https://viewscreen.githubusercontent.com/added/svg*
 https://viewscreen.githubusercontent.com/deleted/svg*
 https://viewscreen.githubusercontent.com/diff/svg*
