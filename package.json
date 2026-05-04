@@ -2,7 +2,7 @@
 	"name": "simple-icons-companion",
 	"description": "Userscript that improves Simple Icons SVG diffs on GitHub.",
 	"private": true,
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
