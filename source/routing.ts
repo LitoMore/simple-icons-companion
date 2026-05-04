@@ -21,6 +21,14 @@ export function isSimpleIconsSvgPreviewFrame() {
 		return true;
 	}
 
+	if (
+		isSimpleIconsRawFileUrl(
+			decodeHexEncodedUrl(parameters.get('enc_url') ?? undefined),
+		)
+	) {
+		return true;
+	}
+
 	if (!document.referrer) {
 		return false;
 	}
@@ -86,5 +94,25 @@ function decodeHexEncodedUrl(value: string | undefined) {
 		return new URL(decoded).href;
 	} catch {
 		return undefined;
+	}
+}
+
+function isSimpleIconsRawFileUrl(value: string | undefined) {
+	if (!value) {
+		return false;
+	}
+
+	try {
+		const parsed = new URL(value);
+		const parts = parsed.pathname.split('/').filter(Boolean);
+		const [owner, repo, , ...pathParts] = parts;
+
+		return (
+			parsed.hostname === 'raw.githubusercontent.com' &&
+			`${owner}/${repo}` === simpleIconsNwo &&
+			pathParts.some((part) => part.endsWith('.svg'))
+		);
+	} catch {
+		return false;
 	}
 }
