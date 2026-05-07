@@ -5,8 +5,8 @@
 // @version      0.0.0
 // @description  Adds Overlay mode plus Points and Color toggles to Simple Icons SVG previews on GitHub.
 // @license      MIT
-// @updateURL    https://companion.simpleicons.org/download
-// @downloadURL  https://companion.simpleicons.org/download
+// @updateURL    https://github.com/LitoMore/simple-icons-companion/releases/latest/download/simple-icons-companion.user.js
+// @downloadURL  https://github.com/LitoMore/simple-icons-companion/releases/latest/download/simple-icons-companion.user.js
 // @match        https://github.com/simple-icons/simple-icons/pull/*/changes
 // @match        https://github.com/simple-icons/simple-icons/pull/*/files
 // @match        https://viewscreen.githubusercontent.com/added/svg*
