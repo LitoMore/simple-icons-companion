@@ -33,7 +33,8 @@ if (!outputFile) {
 }
 
 const prettierOptions = await prettier.resolveConfig(outfile);
-const formattedOutput = await prettier.format(outputFile.text, {
+const outputText = removeGeneratedStrictDirective(outputFile.text);
+const formattedOutput = await prettier.format(outputText, {
 	...prettierOptions,
 	filepath: outfile,
 });
@@ -83,4 +84,8 @@ async function readUserscriptHeader(version) {
 
 function isRecord(value) {
 	return typeof value === 'object' && value !== null;
+}
+
+function removeGeneratedStrictDirective(text) {
+	return text.replace(/(\/\/ ==\/UserScript==\n)['"]use strict['"];\n/v, '$1');
 }
