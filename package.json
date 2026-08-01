@@ -8,16 +8,16 @@
 	"scripts": {
 		"build": "node scripts/build.js",
 		"check": "node --run build && node --check simple-icons-companion.user.js",
-		"typecheck": "tsgo --noEmit",
+		"typecheck": "tsc --noEmit",
 		"lint": "prettier --check . && xo",
 		"test": "node --run typecheck && node --run check && node --run lint"
 	},
 	"devDependencies": {
 		"@litomore/xo-config": "^0.1.0",
 		"@sindresorhus/tsconfig": "^8.1.0",
-		"@typescript/native-preview": "^7.0.0-dev.20260503.1",
 		"esbuild": "^0.28.0",
 		"prettier": "^3.8.3",
+		"typescript": "^7.1.0-dev.20260801.1",
 		"xo": "^2.0.2"
 	}
 }
