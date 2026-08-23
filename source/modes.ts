@@ -1,6 +1,8 @@
 import {overlayMode} from './constants';
 import {cssAttributeValue} from './utils';
 
+type ResizeCallback = () => void;
+
 export function bindModeSwitching(
 	shell: HTMLElement,
 	modes: HTMLFieldSetElement,
@@ -18,6 +20,37 @@ export function bindModeSwitching(
 		}
 
 		switchMode(shell, modes, input.value);
+	});
+}
+
+export function watchDiffParentResize(
+	shell: HTMLElement,
+	modes: HTMLFieldSetElement,
+) {
+	watchParentResize(shell, () => {
+		const selectedMode = modes.querySelector<HTMLInputElement>(
+			'input[name="view-mode"]:checked',
+		)?.value;
+		const activeView = [...shell.querySelectorAll<HTMLElement>('.view')].find(
+			(view) => selectedMode && view.classList.contains(selectedMode),
+		);
+
+		if (activeView && selectedMode) {
+			resizeParent(shell, activeView, selectedMode);
+		}
+	});
+}
+
+export function watchSinglePreviewParentResize(shell: HTMLElement) {
+	watchParentResize(shell, () => {
+		const height = Math.ceil(
+			Math.max(
+				document.documentElement.scrollHeight,
+				document.body?.scrollHeight ?? 0,
+			),
+		);
+
+		postParentHeight(height);
 	});
 }
 
@@ -70,6 +103,44 @@ export function resizeParent(
 	}
 
 	const height = Math.ceil(view.getBoundingClientRect().height + extraHeight);
+	postParentHeight(height);
+}
+
+function watchParentResize(shell: HTMLElement, resize: ResizeCallback) {
+	if (shell.dataset['simpleIconsCompanionParentResize'] === 'true') {
+		return;
+	}
+
+	shell.dataset['simpleIconsCompanionParentResize'] = 'true';
+	let animationFrame: number | undefined;
+	const scheduleResize = () => {
+		if (animationFrame !== undefined) {
+			return;
+		}
+
+		animationFrame = requestAnimationFrame(() => {
+			animationFrame = undefined;
+			resize();
+		});
+	};
+
+	if ('ResizeObserver' in globalThis) {
+		const observer = new ResizeObserver(scheduleResize);
+		observer.observe(shell);
+
+		for (const element of shell.querySelectorAll<HTMLElement>(
+			'.view, .js-render-bar, img',
+		)) {
+			observer.observe(element);
+		}
+	}
+
+	shell.addEventListener('load', scheduleResize, true);
+	globalThis.addEventListener('load', scheduleResize);
+	scheduleResize();
+}
+
+function postParentHeight(height: number) {
 	const identity = globalThis.location.hash.slice(1);
 	let targetOrigin = '*';
 

@@ -5,7 +5,11 @@ import {
 	appendPointsToggle,
 	getCompanionControls,
 } from './controls';
-import {bindModeSwitching} from './modes';
+import {
+	bindModeSwitching,
+	watchDiffParentResize,
+	watchSinglePreviewParentResize,
+} from './modes';
 import {
 	createOverlayView,
 	renderOverlay,
@@ -67,6 +71,7 @@ function initCompanionModes() {
 	appendPointsToggle(shell, controls);
 	appendColorToggle(shell, controls);
 	bindModeSwitching(shell, modes);
+	watchDiffParentResize(shell, modes);
 
 	void renderOverlay(overlayView, deletedUrl, addedUrl, pointsState);
 	void renderPreviewEnhancements({
@@ -113,5 +118,6 @@ function initSinglePreviewEnhancements() {
 
 	appendPointsToggle(shell, controls);
 	appendColorToggle(shell, controls);
+	watchSinglePreviewParentResize(shell);
 	void renderSinglePreviewControls(shell, frame, side, svgUrl);
 }
