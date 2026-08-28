@@ -95,7 +95,8 @@ export function injectStyles() {
       }
 
       .simple-icons-companion-points-toggle,
-      .simple-icons-companion-color-toggle {
+      .simple-icons-companion-color-toggle,
+      .simple-icons-companion-outline-toggle {
         display: inline-flex;
         align-items: center;
         gap: 4px;
@@ -105,7 +106,8 @@ export function injectStyles() {
       }
 
       .simple-icons-companion-points-toggle input,
-      .simple-icons-companion-color-toggle input {
+      .simple-icons-companion-color-toggle input,
+      .simple-icons-companion-outline-toggle input {
         margin: 0;
       }
 
@@ -114,7 +116,8 @@ export function injectStyles() {
         color: var(--fgColor-danger);
       }
 
-      .simple-icons-companion-color-toggle-disabled {
+      .simple-icons-companion-color-toggle-disabled,
+      .simple-icons-companion-outline-toggle-disabled {
         color: var(--fgColor-disabled, var(--fgColor-muted));
         cursor: default;
       }
@@ -170,11 +173,11 @@ export function injectStyles() {
       }
 
       .two-up .simple-icons-companion-points-host,
-      .two-up .simple-icons-companion-color-host {
+      .two-up .simple-icons-companion-svg-host {
         position: relative;
       }
 
-      .simple-icons-companion-color-layer {
+      .simple-icons-companion-svg-layer {
         position: absolute;
         inset: 0;
         z-index: 1;
@@ -187,7 +190,7 @@ export function injectStyles() {
         pointer-events: none;
       }
 
-      .simple-icons-companion-color-layer > .simple-icons-companion-preview-svg {
+      .simple-icons-companion-svg-layer > .simple-icons-companion-preview-svg {
         display: block;
         width: 100%;
         height: 100%;
@@ -196,12 +199,20 @@ export function injectStyles() {
         overflow: visible;
       }
 
-      .simple-icons-companion-color-enabled .simple-icons-companion-color-layer {
+      .simple-icons-companion-color-enabled .simple-icons-companion-svg-layer,
+      .simple-icons-companion-outline-enabled .simple-icons-companion-svg-layer {
         display: block;
       }
 
-      .simple-icons-companion-color-enabled .simple-icons-companion-color-host > img.asset {
+      .simple-icons-companion-color-enabled .simple-icons-companion-svg-host > img.asset,
+      .simple-icons-companion-outline-enabled .simple-icons-companion-svg-host > img.asset {
         opacity: 0;
+      }
+
+      .simple-icons-companion-color-enabled .simple-icons-companion-svg-layer > .simple-icons-companion-preview-svg,
+      .simple-icons-companion-color-enabled .simple-icons-companion-svg-layer > .simple-icons-companion-preview-svg * {
+        color: var(--simple-icons-companion-preview-color) !important;
+        fill: var(--simple-icons-companion-preview-color) !important;
       }
 
       .simple-icons-companion-single-shell > .simple-icons-companion-single-view {
@@ -221,8 +232,17 @@ export function injectStyles() {
         max-height: none;
       }
 
-      .simple-icons-companion-single-shell.simple-icons-companion-color-enabled .simple-icons-companion-color-host > img {
+      .simple-icons-companion-single-shell.simple-icons-companion-color-enabled .simple-icons-companion-svg-host > img,
+      .simple-icons-companion-single-shell.simple-icons-companion-outline-enabled .simple-icons-companion-svg-host > img {
         opacity: 0;
+      }
+
+      .simple-icons-companion-outline-enabled .simple-icons-companion-svg-layer > .simple-icons-companion-preview-svg *,
+      .simple-icons-companion-outline-enabled .simple-icons-companion-overlay-layer > .simple-icons-companion-preview-svg * {
+        fill: none !important;
+        stroke: currentColor !important;
+        stroke-width: 1px !important;
+        vector-effect: non-scaling-stroke;
       }
 
       .simple-icons-companion-single-view > .simple-icons-companion-points-layer {

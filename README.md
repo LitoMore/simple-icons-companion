@@ -2,14 +2,15 @@
 
 A userscript for GitHub's Simple Icons SVG preview and diff viewer.
 
-It adds an **Overlay** view mode next to GitHub's built-in **2-up**, **Swipe**, and **Onion Skin** modes on `simple-icons/simple-icons` SVG file diffs. It also adds **Points** and **Color** checkboxes below the view-mode selector.
-For added-only and deleted-only SVG previews, it adds the **Points** and **Color** checkboxes below the single preview.
+It adds an **Overlay** view mode next to GitHub's built-in **2-up**, **Swipe**, and **Onion Skin** modes on `simple-icons/simple-icons` SVG file diffs. It also adds **Points**, **Color**, and **Outline** checkboxes below the view-mode selector.
+For added-only and deleted-only SVG previews, it adds the same checkboxes below the single preview.
 
 ## Modes
 
 - **Overlay** renders the deleted icon underneath the added icon, with the added icon filled in `#fff`.
 - **Points** overlays SVG path points on whichever preview mode is active, including **2-up**, **Swipe**, **Onion Skin**, and **Overlay**. Initial move points are yellow and path endpoints are red.
 - **Color** applies the relevant Simple Icons hex color from `data/simple-icons.json`.
+- **Outline** displays SVG paths as 1 px outlines, similar to Inkscape's outline display mode. It can be combined with **Color** to use the relevant Simple Icons color for the outlines.
 
 ## Install
 

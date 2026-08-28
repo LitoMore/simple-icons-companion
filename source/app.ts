@@ -2,6 +2,7 @@ import {overlayMode} from './constants';
 import {
 	appendColorToggle,
 	appendModeControl,
+	appendOutlineToggle,
 	appendPointsToggle,
 	getCompanionControls,
 } from './controls';
@@ -70,6 +71,7 @@ function initCompanionModes() {
 	const controls = getCompanionControls(modes);
 	appendPointsToggle(shell, controls);
 	appendColorToggle(shell, controls);
+	appendOutlineToggle(shell, controls);
 	bindModeSwitching(shell, modes);
 	watchDiffParentResize(shell, modes);
 
@@ -118,6 +120,7 @@ function initSinglePreviewEnhancements() {
 
 	appendPointsToggle(shell, controls);
 	appendColorToggle(shell, controls);
+	appendOutlineToggle(shell, controls);
 	watchSinglePreviewParentResize(shell);
 	void renderSinglePreviewControls(shell, frame, side, svgUrl);
 }

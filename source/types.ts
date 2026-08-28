@@ -39,7 +39,6 @@ export type DiffEnhancementOptions = {
 	shell: HTMLElement;
 };
 export type SingleColorOptions = {
-	frame: HTMLElement;
 	side: Side;
 	shell: HTMLElement;
 	sourceSvg: SVGSVGElement;

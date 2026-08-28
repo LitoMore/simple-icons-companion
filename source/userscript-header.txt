@@ -3,7 +3,7 @@
 // @namespace    https://github.com/simple-icons/simple-icons
 // @icon         https://cdn.simpleicons.org/simpleicons/000/fff
 // @version      0.0.0
-// @description  Adds Overlay mode plus Points and Color toggles to Simple Icons SVG previews on GitHub.
+// @description  Adds Overlay mode plus Points, Color, and Outline toggles to Simple Icons SVG previews on GitHub.
 // @license      MIT
 // @updateURL    https://github.com/LitoMore/simple-icons-companion/releases/latest/download/simple-icons-companion.user.js
 // @downloadURL  https://github.com/LitoMore/simple-icons-companion/releases/latest/download/simple-icons-companion.user.js

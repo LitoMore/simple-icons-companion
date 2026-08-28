@@ -1,13 +1,12 @@
-import {
-	attachBuiltInColor,
-	attachColorLayer,
-	fetchSimpleIconColor,
-} from './colors';
+import {attachBuiltInSvgLayers, attachSvgLayer} from './appearance';
+import {fetchSimpleIconColor} from './colors';
 import {overlayMode} from './constants';
 import {
 	disableColorToggle,
+	disableOutlineToggle,
 	disablePointsToggle,
 	enableColorToggle,
+	enableOutlineToggle,
 } from './controls';
 import {resizeParent} from './modes';
 import {
@@ -95,12 +94,16 @@ export async function renderPreviewEnhancements({
 
 		attachBuiltInPoints(shell, 'deleted', pointsState.deletedSvg);
 		attachBuiltInPoints(shell, 'added', pointsState.addedSvg);
+		attachBuiltInSvgLayers(shell, 'deleted', pointsState.deletedSvg);
+		attachBuiltInSvgLayers(shell, 'added', pointsState.addedSvg);
 		watchSwipePoints(shell);
 		attachOverlayPoints(overlayView, pointsState);
+		enableOutlineToggle();
 		void loadPreviewColors(shell, deletedUrl, addedUrl, pointsState);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		disablePointsToggle(message);
+		disableOutlineToggle(shell, message);
 	}
 }
 
@@ -114,9 +117,10 @@ export async function renderSinglePreviewControls(
 		const svg = await fetchSvg(svgUrl, false);
 
 		attachPointsLayer(frame, svg.element);
+		attachSvgLayer(frame, svg.element, side);
+		enableOutlineToggle();
 		void loadSinglePreviewColor({
 			shell,
-			frame,
 			side,
 			svgUrl,
 			sourceSvg: svg.element,
@@ -124,6 +128,7 @@ export async function renderSinglePreviewControls(
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		disablePointsToggle(message);
+		disableOutlineToggle(shell, message);
 	}
 }
 
@@ -148,8 +153,6 @@ async function loadPreviewColors(
 		);
 		shell.style.setProperty('--simple-icons-companion-added-color', addedColor);
 
-		attachBuiltInColor(shell, 'deleted', pointsState.deletedSvg, deletedColor);
-		attachBuiltInColor(shell, 'added', pointsState.addedSvg, addedColor);
 		enableColorToggle({deleted: deletedColor, added: addedColor});
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
@@ -159,7 +162,6 @@ async function loadPreviewColors(
 
 async function loadSinglePreviewColor({
 	shell,
-	frame,
 	side,
 	svgUrl,
 	sourceSvg,
@@ -168,7 +170,6 @@ async function loadSinglePreviewColor({
 		const color = await fetchSimpleIconColor(svgUrl, sourceSvg);
 
 		shell.style.setProperty(`--simple-icons-companion-${side}-color`, color);
-		attachColorLayer(frame, sourceSvg, color);
 		enableColorToggle({[side]: color});
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';

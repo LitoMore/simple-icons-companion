@@ -8,3 +8,4 @@ export const svgNamespace = 'http://www.w3.org/2000/svg';
 export const pathCommandPattern = /^[AaCcHhLlMmQqSsTtVvZz]$/v;
 export const pointsStorageKey = 'simple-icons-companion:points-enabled';
 export const colorStorageKey = 'simple-icons-companion:color-enabled';
+export const outlineStorageKey = 'simple-icons-companion:outline-enabled';

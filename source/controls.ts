@@ -1,4 +1,8 @@
-import {colorStorageKey, pointsStorageKey} from './constants';
+import {
+	colorStorageKey,
+	outlineStorageKey,
+	pointsStorageKey,
+} from './constants';
 import type {ColorDetails} from './types';
 import {cssAttributeValue} from './utils';
 
@@ -112,6 +116,44 @@ export function appendColorToggle(shell: HTMLElement, controls: Element) {
 	return input;
 }
 
+export function appendOutlineToggle(shell: HTMLElement, controls: Element) {
+	const existingInput = document.querySelector(
+		'#simple-icons-companion-outline-toggle',
+	);
+	if (existingInput instanceof HTMLInputElement) {
+		return existingInput;
+	}
+
+	const label = document.createElement('label');
+	label.className =
+		'simple-icons-companion-outline-toggle simple-icons-companion-outline-toggle-disabled';
+	label.htmlFor = 'simple-icons-companion-outline-toggle';
+	label.title = 'Loading SVG outline...';
+
+	const input = document.createElement('input');
+	input.id = 'simple-icons-companion-outline-toggle';
+	input.type = 'checkbox';
+	input.disabled = true;
+	input.checked = readStoredToggle(outlineStorageKey);
+	shell.classList.toggle(
+		'simple-icons-companion-outline-enabled',
+		input.checked,
+	);
+
+	input.addEventListener('change', () => {
+		writeStoredToggle(outlineStorageKey, input.checked);
+		shell.classList.toggle(
+			'simple-icons-companion-outline-enabled',
+			input.checked,
+		);
+	});
+
+	label.append(input, document.createTextNode('Outline'));
+	controls.append(label);
+
+	return input;
+}
+
 export function getCompanionControls(modes: HTMLFieldSetElement) {
 	const existingWrapper = modes.parentElement?.querySelector(
 		'.simple-icons-companion-controls',
@@ -158,6 +200,42 @@ export function disablePointsToggle(message: string) {
 	if (input instanceof HTMLInputElement) {
 		input.disabled = true;
 	}
+}
+
+export function enableOutlineToggle() {
+	const toggle = document.querySelector<HTMLLabelElement>(
+		'.simple-icons-companion-outline-toggle',
+	);
+	const input = toggle?.querySelector('input');
+
+	if (toggle) {
+		toggle.title = 'Show paths as 1 px outlines';
+		toggle.classList.remove('simple-icons-companion-outline-toggle-disabled');
+	}
+
+	if (input instanceof HTMLInputElement) {
+		input.disabled = false;
+	}
+}
+
+export function disableOutlineToggle(shell: HTMLElement, message: string) {
+	const toggle = document.querySelector<HTMLLabelElement>(
+		'.simple-icons-companion-outline-toggle',
+	);
+	const input = toggle?.querySelector('input');
+
+	if (toggle) {
+		toggle.title = `Outline failed to load: ${message}`;
+		toggle.classList.add('simple-icons-companion-outline-toggle-disabled');
+	}
+
+	if (input instanceof HTMLInputElement) {
+		input.checked = false;
+		input.disabled = true;
+	}
+
+	shell.classList.remove('simple-icons-companion-outline-enabled');
+	writeStoredToggle(outlineStorageKey, false);
 }
 
 export function enableColorToggle(colors: ColorDetails) {

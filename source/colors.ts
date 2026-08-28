@@ -1,5 +1,4 @@
-import {forceSvgFill} from './svg';
-import type {RawGitHubFile, Side, SimpleIconMetadata} from './types';
+import type {RawGitHubFile, SimpleIconMetadata} from './types';
 
 const simpleIconsMetadataCache = new Map<string, SimpleIconMetadata[]>();
 
@@ -141,69 +140,4 @@ function normalizeHexColor(value: string) {
 	}
 
 	return `#${hex.toUpperCase()}`;
-}
-
-export function attachBuiltInColor(
-	shell: HTMLElement,
-	side: Side,
-	sourceSvg: SVGSVGElement | undefined,
-	color: string,
-) {
-	const frames = shell.querySelectorAll(
-		`.two-up .${side}-frame, .swipe .${side}-frame, .onion-skin .${side}-frame`,
-	);
-
-	for (const frame of frames) {
-		attachColorLayer(frame, sourceSvg, color);
-	}
-}
-
-export function attachColorLayer(
-	host: Element | undefined,
-	sourceSvg: SVGSVGElement | undefined,
-	color: string | undefined,
-) {
-	if (!host || !sourceSvg || !color) {
-		return;
-	}
-
-	host.classList.add('simple-icons-companion-color-host');
-
-	for (const child of host.children) {
-		if (child.classList.contains('simple-icons-companion-color-layer')) {
-			child.remove();
-		}
-	}
-
-	const layer = document.createElement('span');
-	const coloredSvg = sourceSvg.cloneNode(true);
-
-	if (!(coloredSvg instanceof SVGSVGElement)) {
-		return;
-	}
-
-	layer.className = 'simple-icons-companion-color-layer';
-	copyPreviewImageFrameStyles(host, layer);
-	forceSvgFill(coloredSvg, color);
-	layer.append(coloredSvg);
-	host.append(layer);
-}
-
-function copyPreviewImageFrameStyles(host: Element, layer: HTMLElement) {
-	const image = host.querySelector<HTMLImageElement>(':scope > img');
-
-	if (!image) {
-		return;
-	}
-
-	const imageStyle = getComputedStyle(image);
-	layer.style.background = imageStyle.background;
-	layer.style.borderTop = imageStyle.borderTop;
-	layer.style.borderRight = imageStyle.borderRight;
-	layer.style.borderBottom = imageStyle.borderBottom;
-	layer.style.borderLeft = imageStyle.borderLeft;
-	layer.style.borderRadius = imageStyle.borderRadius;
-	layer.style.borderImage = imageStyle.borderImage;
-	layer.style.boxSizing = imageStyle.boxSizing;
-	layer.style.boxShadow = imageStyle.boxShadow;
 }
